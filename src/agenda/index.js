@@ -10,8 +10,8 @@ import ReservationsList from './reservation-list'
 import styleConstructor from './style'
 import { VelocityTracker } from '../input'
 
-let HEADER_HEIGHT = 104
-let KNOB_HEIGHT = 24
+const HEADER_HEIGHT = 104
+const KNOB_HEIGHT = 24
 
 //Fallback when RN version is < 0.44
 const viewPropTypes = ViewPropTypes || View.propTypes
@@ -89,8 +89,6 @@ export default class AgendaView extends Component {
 
   constructor(props) {
     super(props)
-    HEADER_HEIGHT = this.props.headerHeight ? this.props.headerHeight : 104
-    KNOB_HEIGHT = this.props.knobHeight ? this.props.knobHeight : 24
     this.styles = styleConstructor(props.theme)
     const windowSize = Dimensions.get('window')
     this.viewHeight = windowSize.height
@@ -306,9 +304,12 @@ export default class AgendaView extends Component {
     const newDate = parseDate(day)
     const withAnimation = dateutils.sameMonth(newDate, this.state.selectedDay)
     this.calendar.scrollToDay(day, this.calendarOffset(), withAnimation)
-    this.setState({
-      selectedDay: parseDate(day)
-    })
+
+    if (this.props.fixSelectedDay !== true) {
+      this.setState({
+        selectedDay: parseDate(day)
+      })
+    }
 
     if (this.props.onDayChange) {
       this.props.onDayChange(xdateToData(newDate))
@@ -415,7 +416,12 @@ export default class AgendaView extends Component {
         onLayout={this.onLayout}
         style={[this.props.style, { flex: 1, overflow: 'hidden' }]}
       >
-        <View style={this.styles.reservations}>
+        <View
+          style={[
+            this.styles.reservations,
+            this.props.hideHeader ? { marginTop: 0 } : {}
+          ]}
+        >
           {this.renderReservations()}
         </View>
         <Animated.View style={headerStyle}>
