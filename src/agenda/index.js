@@ -296,6 +296,7 @@ export default class AgendaView extends Component {
         onScroll={() => {}}
         ref={c => (this.list = c)}
         theme={this.props.theme}
+        fixSelectedDay={this.props.fixSelectedDay}
       />
     )
   }
